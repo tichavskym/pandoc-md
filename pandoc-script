@@ -38,6 +38,11 @@ convert_directory_array() {
   done
 }
 
+# Distinguish between absolute and relative paths
+convert_file_array() {
+  echo "Not implemented yet."
+}
+
 ######## Main script logic starts here ########
 case $1 in
 "-t") convert_current_directory ;;
@@ -50,5 +55,14 @@ case $1 in
     shift
   done
   convert_directory_array
+  ;;
+"-f")
+  shift
+  files=()
+  while [ -n "$1" ]; do
+    files+=($1)
+    shift
+  done
+  convert_file_array
   ;;
 esac
