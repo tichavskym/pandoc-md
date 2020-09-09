@@ -1,0 +1,54 @@
+#!/bin/bash
+#########################
+# This script is used for converting .md files to .html files through utility called pandoc (which has to be installed on the machine). It lets you specify array of directories in arguments, so you don't have to convert them manually one by one. Script also checks for existing html files and if they are up to date (based on modification date difference between .md & .html) they don't get recompiled to prevent unnecessary writes.
+########################
+
+# This calls pandoc utility.
+# `--quiet` to suppress warning messages, most of them just tell you that the header have not been specified.
+# Either `--css=pandoc.css` or `-c pandoc.css` for specifying stylesheet
+pandoc_conversion() {
+  pandoc --quiet -c style.css -s "$file" -o "${file%.md}.html"
+  echo "File $file was compiled to html."
+}
+
+# Goes through every .md file in the directory and if it has a corresponding .html file already generated, modification dates are compared and based on this information .html file is either recompiled or not. If there is no .html file yet, it is generated.
+convert_directory() {
+  for file in "${path}/"*.md; do
+    local htmlFile="${file%.md}.html"
+
+    if [ -f "$htmlFile" ]; then
+      # True if `file` (.md file) is newer than `htmlFile` (according to modification date).
+      if [ "$file" -nt "$htmlFile" ]; then
+        pandoc_conversion
+      fi
+    else
+      pandoc_conversion
+    fi
+  done
+}
+
+convert_current_directory() {
+  path=$(pwd)
+  convert_directory
+}
+
+convert_directory_array() {
+  for path in "${directories[@]}"; do
+    convert_directory
+  done
+}
+
+######## Main script logic starts here ########
+case $1 in
+"-t") convert_current_directory ;;
+"-d")
+  shift
+  directories=()
+  # while $1 is not null or empty
+  while [ -n "$1" ]; do
+    directories+=($1)
+    shift
+  done
+  convert_directory_array
+  ;;
+esac
