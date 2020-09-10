@@ -11,8 +11,12 @@
 # `--quiet` to suppress warning messages, most of them just tell you that the header have not been specified.
 # Either `--css=pandoc.css` or `-c pandoc.css` for specifying stylesheet
 pandoc_conversion() {
-  pandoc --quiet -c style.css -s "$file" -o "${file%.md}.html"
-  echo "File $file was compiled to html."
+  if [ "$stylesheet" = "" ]; then
+    pandoc --quiet -s "$file" -o "${file%.md}.html"
+  else
+    pandoc --quiet -c stylesheet -s "$file" -o "${file%.md}.html"
+    echo "File $file was compiled to html."
+  fi
 }
 
 # If file has a corresponding .html file already generated, modification dates are compared and based on this
@@ -78,7 +82,7 @@ while getopts ":dfits:r" opt; do
   i) switch_variable="files" ;;
   t) switch_variable="this" ;;
   f) force="true" ;; # not implemented yet
-  s) stylesheet=$OPTARG ;; # not implemented yet
+  s) stylesheet=$OPTARG ;;
   r) recursive="true" ;; # not implemented yet
   \?) output_usage_info ;; # not implemented yet
   esac
