@@ -1,6 +1,10 @@
 #!/bin/bash
 #########################
-# This script is used for converting .md files to .html files through utility called pandoc (which has to be installed on the machine). It lets you specify array of directories in arguments, so you don't have to convert them manually one by one. Script also checks for existing html files and if they are up to date (based on modification date difference between .md & .html) they don't get recompiled to prevent unnecessary writes.
+# This script is used for converting .md files to .html files through utility called pandoc (which has to be
+# installed on the machine). It lets you specify array of directories or files in arguments, so you don't
+# have to convert them manually one by one. Script also checks for existing html files and if they are
+# up to date (based on modification date difference between .md & .html) they don't get recompiled
+# to prevent unnecessary writes.
 ########################
 
 # This calls pandoc utility.
@@ -11,19 +15,25 @@ pandoc_conversion() {
   echo "File $file was compiled to html."
 }
 
-# Goes through every .md file in the directory and if it has a corresponding .html file already generated, modification dates are compared and based on this information .html file is either recompiled or not. If there is no .html file yet, it is generated.
-convert_directory() {
-  for file in "${path}/"*.md; do
-    local htmlFile="${file%.md}.html"
+# If file has a corresponding .html file already generated, modification dates are compared and based on this
+# information .html file is either recompiled or not. If there is no .html file yet, it is generated.
+convert_file_if_it_is_not_up_to_date() {
+  local htmlFile="${file%.md}.html"
 
-    if [ -f "$htmlFile" ]; then
-      # True if `file` (.md file) is newer than `htmlFile` (according to modification date).
-      if [ "$file" -nt "$htmlFile" ]; then
-        pandoc_conversion
-      fi
-    else
+  if [ -f "$htmlFile" ]; then
+    # True if `file` (.md file) is newer than `htmlFile` (according to modification date).
+    if [ "$file" -nt "$htmlFile" ]; then
       pandoc_conversion
     fi
+  else
+    pandoc_conversion
+  fi
+}
+
+# Goes through every .md file in the directory and converts it if it is not up to date.
+convert_directory() {
+  for file in "${path}/"*.md; do
+    convert_file_if_it_is_not_up_to_date
   done
 }
 
@@ -38,9 +48,18 @@ convert_directory_array() {
   done
 }
 
-# Distinguish between absolute and relative paths
+# Converts every file from the `files` array. Checks if the $file starts with `/` and based on that decides
+# heather an absolute or relative path was used.
 convert_file_array() {
-  echo "Not implemented yet."
+  for file in "${files[@]}"; do
+    firstchar=${file:0:1}
+    if [ $firstchar = '/' ]; then
+      convert_file_if_it_is_not_up_to_date
+    else
+      file="$(pwd)/$file"
+      convert_file_if_it_is_not_up_to_date
+    fi
+  done
 }
 
 ######## Main script logic starts here ########
