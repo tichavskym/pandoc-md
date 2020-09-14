@@ -38,7 +38,7 @@ convert_file_if_it_is_not_up_to_date() {
 # Goes through every .md file in the directory. If force option was chosen, it converts all files.
 # Otherwise only those not up to date are converted.
 convert_directory() {
-  if [ "$force" = "true" ]; then
+  if $force; then
     for file in "${path}/"*.md; do
       pandoc_conversion
     done
@@ -64,7 +64,7 @@ convert_directory_array() {
 # whether an absolute or relative path was used.
 # If force = true, it will convert files even if they are up to date.
 convert_file_array() {
-  if [ "$force" = "true" ]; then
+  if $force; then
     for file in "${files[@]}"; do
       firstchar=${file:0:1}
       if [ "$firstchar" = '/' ]; then
@@ -97,13 +97,13 @@ output_usage_info() {
 # force and recursive are on/off variables
 # stylesheet holds path to the stylesheet path of the .html file, defaults to no stylesheet at all
 switch_variable=""
-force=""
+force=false
 while getopts ":ditfs:r" opt; do
   case $opt in
   d) switch_variable="dirs" ;;
   i) switch_variable="files" ;;
   t) switch_variable="this" ;;
-  f) force="true" ;;
+  f) force=true ;;
   s) stylesheet=$OPTARG ;;
   r) recursive="true" ;; # not implemented yet
   \?) output_usage_info ;; # not implemented yet
