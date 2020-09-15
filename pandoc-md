@@ -12,8 +12,13 @@
 # Either `--css=pandoc.css` or `-c pandoc.css` for specifying stylesheet
 pandoc_conversion() {
   if [ "$stylesheet" = "" ]; then
-    # no stylesheet given by the user
-    pandoc --quiet -s "$file" -o "${file%.md}.html"
+    # No stylesheet given by the user. Hence trying to use the path in the environment
+    # variable PANDOC_MD_STYLE.
+    if [ "$PANDOC_MD_STYLE" = "" ]; then
+      pandoc --quiet -s "$file" -o "${file%.md}.html"
+    else
+      pandoc --quiet -c "${PANDOC_MD_STYLE}" -s "$file" -o "${file%.md}.html"
+    fi
   else
     pandoc --quiet -c "${stylesheet}" -s "$file" -o "${file%.md}.html"
   fi
