@@ -40,17 +40,62 @@ convert_file_if_it_is_not_up_to_date() {
   fi
 }
 
-# Goes through every .md file in the directory. If force option was chosen, it converts all files.
-# Otherwise only those not up to date are converted.
+forced_recursive_dir_conversion() {
+  for a in "$path"/*; do
+    if [ -d "$a" ]; then
+      path=$a
+      convert_directory
+    elif [ -f "$a" ]; then
+      if [[ $a == *.md ]]; then
+        file="$a"
+        pandoc_conversion
+      fi
+    fi
+  done
+}
+
+forced_nonrecursive_dir_conversion() {
+  for file in "${path}/"*.md; do
+    pandoc_conversion
+  done
+}
+
+unforced_recursive_dir_conversion() {
+  for a in "$path"/*; do
+    if [ -d "$a" ]; then
+      path=$a
+      convert_directory
+    elif [ -f "$a" ]; then
+      if [[ $a == *.md ]]; then
+        file="$a"
+        convert_file_if_it_is_not_up_to_date
+      fi
+    fi
+  done
+}
+
+unforced_nonrecursive_dir_conversion() {
+  for file in "${path}/"*.md; do
+    convert_file_if_it_is_not_up_to_date
+  done
+}
+
+# Goes through every .md file in the directory.
+# If force option was chosen, it converts all files. Otherwise only those not up to date are converted.
+# If recursive option was chosen, even files in subdirectories will be converted.
 convert_directory() {
   if $force; then
-    for file in "${path}/"*.md; do
-      pandoc_conversion
-    done
+    if $recursive; then
+      forced_recursive_dir_conversion
+    else
+      forced_nonrecursive_dir_conversion
+    fi
   else
-    for file in "${path}/"*.md; do
-      convert_file_if_it_is_not_up_to_date
-    done
+    if $recursive; then
+      unforced_recursive_dir_conversion
+    else
+      unforced_nonrecursive_dir_conversion
+    fi
   fi
 }
 
@@ -68,6 +113,7 @@ convert_directory_array() {
 # Converts every file from the `files` array. Checks if the $file starts with `/` and based on that decides
 # whether an absolute or relative path was used.
 # If force = true, it will convert files even if they are up to date.
+# If recursive option was chosen, even files in subdirectories will be converted.
 convert_file_array() {
   if $force; then
     for file in "${files[@]}"; do
@@ -103,6 +149,7 @@ output_usage_info() {
 # stylesheet holds path to the stylesheet path of the .html file, defaults to no stylesheet at all
 switch_variable=""
 force=false
+recursive=false
 while getopts ":ditfs:r" opt; do
   case $opt in
   d) switch_variable="dirs" ;;
@@ -110,7 +157,7 @@ while getopts ":ditfs:r" opt; do
   t) switch_variable="this" ;;
   f) force=true ;;
   s) stylesheet=$OPTARG ;;
-  r) recursive="true" ;; # not implemented yet
+  r) recursive=true ;;
   \?) output_usage_info ;; # not implemented yet
   esac
 done

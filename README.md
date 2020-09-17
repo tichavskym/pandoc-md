@@ -20,5 +20,6 @@ OPTIONAL OPTIONS
 
 - `-s` choose stylesheet to be linked to the resulting `.html` files
 - `-f` force option - skips the check if files are up to date
+- `-r` recursively convert folders (convert files in the working directory and in all containing directories)
 
 If you keep using the same style file for the most of your scripts, you can set an environment variable `PANDOC_MD_STYLE` to contain a path to that script. The path in `PANDOC_MD_STYLE` will be used by default (that is when you don't use `-s` option).
