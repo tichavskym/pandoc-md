@@ -139,7 +139,24 @@ convert_file_array() {
 }
 
 output_usage_info() {
-  echo "To be implemented"
+  # `-e` enables character escaping
+  echo -e "USAGE:
+\t icaled [options] [paths]
+\t -h \t show help
+
+SWITCH OPTIONS (one of these is mandatory)
+
+\t -d   convert specified directories
+\t -i   convert specified files
+\t -t   convert this (local) folder
+
+OPTIONAL OPTIONS
+
+\t -s   choose stylesheet to be linked to the resulting .html files
+\t -f   force option - skips the check if files are up to date
+\t -r   recursively convert folders (convert files in the working directory and in all containing directories)
+
+If you keep using the same style file for the most of your scripts, you can set an environment variable PANDOC_MD_STYLE to contain a path to that script. The path in PANDOC_MD_STYLE will be used by default (that is when you don't use -s option)."
 }
 
 ######## Main script logic starts here ########
@@ -158,7 +175,7 @@ while getopts ":ditfs:r" opt; do
   f) force=true ;;
   s) stylesheet=$OPTARG ;;
   r) recursive=true ;;
-  \?) output_usage_info ;; # not implemented yet
+  \?) output_usage_info ;;
   esac
 done
 

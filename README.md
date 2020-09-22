@@ -6,9 +6,9 @@ This script converts .md files to .html files through utility called *[pandoc](h
 
 ```bash
     icaled [options] [paths]
-
-    -h          show help
 ```
+
+- `-h` show help
 
 SWITCH OPTIONS (one of these is mandatory)
 
