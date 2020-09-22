@@ -186,7 +186,7 @@ case $switch_variable in
   directories=()
   # while $1 is not null or empty
   while [ -n "$1" ]; do
-    directories+=($1)
+    directories+=("$1")
     shift
   done
   convert_directory_array
@@ -195,7 +195,7 @@ case $switch_variable in
   shift $(($OPTIND - 1))
   files=()
   while [ -n "$1" ]; do
-    files+=($1)
+    files+=("$1")
     shift
   done
   convert_file_array
