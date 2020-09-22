@@ -1,10 +1,11 @@
 #!/bin/bash
 #########################
 # This script is used for converting .md files to .html files through utility called pandoc (which has to be
-# installed on the machine). It lets you specify array of directories or files in arguments, so you don't
-# have to convert them manually one by one. Script also checks for existing html files and if they are
-# up to date (based on modification date difference between .md & .html) they don't get recompiled
-# to prevent unnecessary writes.
+# installed on the machine). It lets you specify an array of directories or files in arguments, so you don't
+# have to convert them manually one by one. Script is able to check if the .html file is up to date so it does
+# not get recompiled (based on the modification date). Other options let you set a stylesheet for the resulting
+# file (you can also use an environment variable `PANDOC_MD_STYLE to set a default one) and use a recursive
+# conversion, which converts also files in subdirectories. For usage info see `pandoc-md -h`.
 ########################
 
 # This calls pandoc utility.
@@ -12,8 +13,7 @@
 # Either `--css=pandoc.css` or `-c pandoc.css` for specifying stylesheet
 pandoc_conversion() {
   if [ "$stylesheet" = "" ]; then
-    # No stylesheet given by the user. Hence trying to use the path in the environment
-    # variable PANDOC_MD_STYLE.
+    # No stylesheet given by the user. Hence trying to use the path in the environment  variable PANDOC_MD_STYLE.
     if [ "$PANDOC_MD_STYLE" = "" ]; then
       pandoc --quiet -s "$file" -o "${file%.md}.html"
     else
@@ -113,7 +113,7 @@ convert_directory_array() {
 # Converts every file from the `files` array. Checks if the $file starts with `/` and based on that decides
 # whether an absolute or relative path was used.
 # If force = true, it will convert files even if they are up to date.
-# If recursive option was chosen, even files in subdirectories will be converted.
+# If recursive = true, even files in subdirectories will be converted.
 convert_file_array() {
   if $force; then
     for file in "${files[@]}"; do
@@ -144,9 +144,9 @@ output_usage_info() {
 
 ######## Main script logic starts here ########
 
-# switch variable lets us decide whether the app will convert files, directories or this directory
-# force and recursive are on/off variables
-# stylesheet holds path to the stylesheet path of the .html file, defaults to no stylesheet at all
+# Switch variable lets us decide whether the app will convert files, directories or this directory.
+# Force and recursive are on/off variables.
+# Stylesheet holds path to the stylesheet path of the `.html` file, defaults to no stylesheet at all.
 switch_variable=""
 force=false
 recursive=false
