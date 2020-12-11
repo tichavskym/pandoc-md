@@ -5,7 +5,7 @@ This script converts .md files to .html files through utility called *[pandoc](h
 ## Usage:
 
 ```bash
-    icaled [options] [paths]
+    pandoc-md [options] [paths]
 ```
 
 - `-h` show help
@@ -22,4 +22,4 @@ OPTIONAL OPTIONS
 - `-f` force option - skips the check if files are up to date
 - `-r` recursively convert folders (convert files in the working directory and in all containing directories)
 
-If you keep using the same style file for the most of your scripts, you can set an environment variable `PANDOC_MD_STYLE` to contain a path to that script. The path in `PANDOC_MD_STYLE` will be used by default (that is when you don't use `-s` option).
+If you keep using the same style file for the most of your html files, you can set an environment variable `PANDOC_MD_STYLE` to contain a path to that script. The path in `PANDOC_MD_STYLE` will be used by default (that is when you don't use `-s` option).

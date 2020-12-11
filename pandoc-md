@@ -141,7 +141,7 @@ convert_file_array() {
 output_usage_info() {
   # `-e` enables character escaping
   echo -e "USAGE:
-\t icaled [options] [paths]
+\t pandoc-md [options] [paths]
 \t -h \t show help
 
 SWITCH OPTIONS (one of these is mandatory)
@@ -156,7 +156,7 @@ OPTIONAL OPTIONS
 \t -f   force option - skips the check if files are up to date
 \t -r   recursively convert folders (convert files in the working directory and in all containing directories)
 
-If you keep using the same style file for the most of your scripts, you can set an environment variable PANDOC_MD_STYLE to contain a path to that script. The path in PANDOC_MD_STYLE will be used by default (that is when you don't use -s option)."
+If you keep using the same style file for the most of your html files, you can set an environment variable PANDOC_MD_STYLE to contain a path to that script. The path in PANDOC_MD_STYLE will be used by default (that is when you don't use -s option)."
 }
 
 ######## Main script logic starts here ########
