@@ -1,19 +1,27 @@
 #!/bin/bash
 #########################
-# This script is used for converting .md files to .html files through utility called pandoc (which has to be
-# installed on the machine). It lets you specify an array of directories or files in arguments, so you don't
-# have to convert them manually one by one. Script is able to check if the .html file is up to date so it does
-# not get recompiled (based on the modification date). Other options let you set a stylesheet for the resulting
-# file (you can also use an environment variable `PANDOC_MD_STYLE to set a default one) and use a recursive
-# conversion, which converts also files in subdirectories. For usage info see `pandoc-md -h`.
+# This script is used for converting .md files to .html files through utility
+# called pandoc (which has to be installed on the machine). It lets you specify
+# an array of directories or files in arguments, so you don't have to convert
+# them manually one by one. Script is able to check if the .html file is up to
+# date so it does not get recompiled (based on the modification date). Other
+# options let you set a stylesheet for the resulting file (you can also use an
+# environment variable `PANDOC_MD_STYLE to set a default one) and use a
+# recursive conversion, which converts also files in subdirectories. For usage
+# info see `pandoc-md -h`.
 ########################
 
+print_success_msg(){
+  echo "File $file was compiled to html."
+}
+
 # This calls pandoc utility.
-# `--quiet` to suppress warning messages, most of them just tell you that the header have not been specified.
-# Either `--css=pandoc.css` or `-c pandoc.css` for specifying stylesheet
-pandoc_conversion() {
+# `--quiet` to suppress warning messages (it wants to have header defined),
+# `-c` flag for stylesheet linking.
+executing_pandoc(){
   if [ "$stylesheet" = "" ]; then
-    # No stylesheet given by the user. Hence trying to use the path in the environment  variable PANDOC_MD_STYLE.
+    # No stylesheet given by the user. Hence trying to use the path in the
+    # environment variable PANDOC_MD_STYLE.
     if [ "$PANDOC_MD_STYLE" = "" ]; then
       pandoc --quiet -s "$file" -o "${file%.md}.html"
     else
@@ -22,7 +30,12 @@ pandoc_conversion() {
   else
     pandoc --quiet -c "${stylesheet}" -s "$file" -o "${file%.md}.html"
   fi
-  echo "File $file was compiled to html."
+}
+
+pandoc_conversion() {
+  if executing_pandoc; then
+    print_success_msg
+  fi
 }
 
 # If file has a corresponding .html file already generated, modification dates are compared and based on this
